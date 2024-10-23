@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Clause {
     ArrayList<Predicate> literals;
@@ -25,6 +26,19 @@ public class Clause {
             str += pred.toString();
         }
         return str;
+    }
+
+     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Clause other = (Clause) obj;
+        return this.toString().equals(other.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toString()); 
     }
 
 

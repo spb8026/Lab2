@@ -40,7 +40,16 @@ public class Tester {
         {
             KB.printKB();
             Resolver resolver = new Resolver(KB);
-            System.out.println(resolver.resolve());
+            boolean result = resolver.queResolve();
+            System.out.println(KB.filename);
+            if (result)
+            {
+                System.out.println("yes");
+            }
+            else
+            {
+                System.out.println("no");
+            }
         }
 
     }
