@@ -10,10 +10,12 @@ public class KnowledgeBase {
 
     private Hashtable<String,Predicate> predicates;
     private ArrayList<Clause> clauses;
+    private String filename;
 
 
     public KnowledgeBase(String filename) throws FileNotFoundException
     {
+        this.filename = filename;
         Scanner scanner = new Scanner(new File(filename));
 
         Hashtable<String,Term>  terms = new Hashtable<>();
@@ -44,12 +46,14 @@ public class KnowledgeBase {
         {
             terms.put(consts, new Constant(consts));
         }
+        /// Get Functions
         scanner.next();
-        String[] funcStrings = scanner.nextLine().split("\\s+");
+        String[] funcStrings = scanner.nextLine().strip().split("\\s+");
         for (String funcs: funcStrings)
         {
-            terms.put(funcs, new Function(filename, null));
+            terms.put(funcs, new Function(funcs, new ArrayList<Term>()));
         }
+        /// Get Clauses
         scanner.nextLine();
         String line;
         this.terms = terms;
@@ -75,35 +79,102 @@ public class KnowledgeBase {
 
     }
 
-    private Predicate parsePredicate(String predString)
-    {
-        Boolean isNegated;
-        if (predString.charAt(0) == '!')
-        {
+    private Predicate parsePredicate(String predString) {
+        boolean isNegated = false;
+        String predName = predString;
+        ArrayList<Term> arguments = new ArrayList<>();
+    
+        if (predString.charAt(0) == '!') {
             isNegated = true;
             predString = predString.substring(1);
         }
-        else
-        {
-            isNegated = false;
-        }
-        String predName = predString.substring(0,predString.indexOf("("));
-        predString = predString.substring(predString.indexOf('(')+1);
-        ArrayList<Term> arguments = new ArrayList<>();
-        int i = 0;
-        while (i < predString.length()-1)
-        {
-            String termString = "";
-            while (predString.charAt(i) != ',' && predString.charAt(i) != ')')
-            {
-                termString += predString.charAt(i);
-                i ++;
+    
+        if (predString.contains("(")) {
+            predName = predString.substring(0, predString.indexOf("("));
+            String argString = predString.substring(predString.indexOf('(') + 1, predString.lastIndexOf(')')).strip();
+    
+            // Split arguments
+            int i = 0;
+            while (i < argString.length()) {
+                StringBuilder termString = new StringBuilder();
+                while (i < argString.length() && argString.charAt(i) != ',' && argString.charAt(i) != ')') {
+                    termString.append(argString.charAt(i));
+                    i++;
+                }
+    
+                String term = termString.toString().trim();
+                if (term.contains("(")) {
+                    // Parse function
+                    term += ")";
+                    i++;
+                    arguments.add(parseFunction(term));
+                } else if (terms.containsKey(term)) {
+                    // If it's a variable or constant
+                    arguments.add(terms.get(term));
+                } else {
+                    throw new IllegalArgumentException("Undefined term: " + term);
+                }
+    
+                // Move past the comma
+                i++;
             }
-            arguments.add(terms.get(termString));
-            i ++;
         }
+    
         return new Predicate(predName, isNegated, arguments);
     }
+    
 
+    private Function parseFunction(String funcString) {
+        String funcName = funcString.substring(0, funcString.indexOf('('));
+        String argString = funcString.substring(funcString.indexOf('(') + 1, funcString.lastIndexOf(')'));
+        ArrayList<Term> arguments = new ArrayList<>();
+    
+        // Split the arguments by comma, and parse each term
+        int i = 0;
+        while (i < argString.length()) {
+            StringBuilder termString = new StringBuilder();
+            while (i < argString.length() && argString.charAt(i) != ',' && argString.charAt(i) != ')') {
+                termString.append(argString.charAt(i));
+                i++;
+            }
+    
+            // Check if the argument is a function or a simple term
+            String term = termString.toString().trim();
+            if (term.contains("(")) {
+                // Recursively parse the function
+                arguments.add(parseFunction(term));
+            } else if (terms.containsKey(term)) {
+                // If it's a variable or constant, use it from terms
+                arguments.add(terms.get(term));
+            } else {
+                throw new IllegalArgumentException("Undefined term: " + term);
+            }
+    
+            // Move past the comma
+            i++;
+        }
+    
+        return new Function(funcName, arguments);
+    }
+    
+
+    public ArrayList<Clause> getClauses() {
+        return clauses;
+    }
+    public Hashtable<String, Term> getTerms() {
+        return terms;
+    }
+    public Hashtable<String, Predicate> getPredicates() {
+        return predicates;
+    }
+
+    public void printKB() {
+        System.out.println(filename);
+        for (Clause cl: clauses)
+        {
+            System.out.println(cl.toString());
+        }
+        System.out.println("??????????????????????????????????????????????????????????????????????????????????????");
+    }
 
 }

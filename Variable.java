@@ -11,4 +11,11 @@ public class Variable extends Term {
         this.curRelation = relation;
     }
 
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    
+
 }

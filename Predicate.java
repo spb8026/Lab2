@@ -16,6 +16,30 @@ public class Predicate {
     {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+       String str = "";
+       if (is_negated)
+       {
+            str += "~";
+       }
+       str+= this.name;
+       str += "(";
+       for (Term trm: arguments)
+       {
+            if (trm != null)
+            {
+                str+= trm.toString() +",";
+            }
+       }
+       str += ")";
+       return str;
+    }
+
+    public ArrayList<Term> getArguments() {
+        return arguments;
+    }
     
 
 }

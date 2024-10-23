@@ -15,5 +15,18 @@ public class Function extends Term{
         this.name = name;
     }
 
-    private Term evaluateFunction(){ return null;}
+    @Override
+    public String toString() {
+        String str = name;
+        str += "(";
+        for (Term trm: arguments)
+        {
+            str += trm.toString();
+        }
+        str += ")";
+        return str;
+
+    }
+    
+    
 }
