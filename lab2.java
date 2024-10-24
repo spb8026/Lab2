@@ -13,7 +13,7 @@ public class lab2 {
         }
         else
         {
-            System.out.println("false");
+            System.out.println("no");
         }
     }
 
