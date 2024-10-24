@@ -40,6 +40,14 @@ public class Predicate {
     public ArrayList<Term> getArguments() {
         return arguments;
     }
+
+    public void applySubstitution(Subsitution theta) {
+        for (int i = 0; i < arguments.size(); i++) {
+            Term arg = arguments.get(i);
+            Term substitutedArg = arg.applySubstitution(theta);
+            arguments.set(i, substitutedArg);  // Update with substituted argument
+        }
+    }
     
 
 }

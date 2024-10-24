@@ -232,95 +232,109 @@ public class Resolver {
         return newClasues;
     }
     public ArrayList<Clause> PCResolveWithUni(Clause Ci, Clause Cj) 
-    {
-        ArrayList<Predicate> CiLits= Ci.getLiterals();
-        ArrayList<Predicate> CjLits= Cj.getLiterals();    
-        ArrayList<Clause> newClasues = new ArrayList<>();
-        if (Ci.isUnit() && Cj.isUnit())
-        {
-            Predicate CiUnitPred = CiLits.get(0);
-            Predicate CjUnitPred = CjLits.get(0);
-            ArrayList<Term> CiUnitArgs = CiUnitPred.getArguments();
-            ArrayList<Term> CjUnitArgs = CjUnitPred.getArguments();
-            Subsitution theta = uni.unify(CiUnitArgs, CjUnitArgs, new Subsitution());
-            if (theta != null)
-            {
-                if ((CiUnitPred.is_negated && !CjUnitPred.is_negated) || (!CiUnitPred.is_negated && CjUnitPred.is_negated))
-                {
-                    // System.out.println(Ci.toString() + " and  " + Cj.toString() + " to []");
-                        newClasues.add(new Clause(null));
+{
+    ArrayList<Predicate> CiLits = Ci.getLiterals();
+    ArrayList<Predicate> CjLits = Cj.getLiterals();    
+    ArrayList<Clause> newClasues = new ArrayList<>();
+    
+    if (Ci.isUnit() && Cj.isUnit()) {
+        Predicate CiUnitPred = CiLits.get(0);
+        Predicate CjUnitPred = CjLits.get(0);
+        ArrayList<Term> CiUnitArgs = CiUnitPred.getArguments();
+        ArrayList<Term> CjUnitArgs = CjUnitPred.getArguments();
+        
+        Subsitution theta = uni.unify(CiUnitArgs, CjUnitArgs, new Subsitution());
+        if (theta != null) {
+            if ((CiUnitPred.is_negated && !CjUnitPred.is_negated) || (!CiUnitPred.is_negated && CjUnitPred.is_negated)) {
+                // Apply substitution to the predicate arguments
+                CiUnitPred.applySubstitution(theta);
+                CjUnitPred.applySubstitution(theta);
+                
+                // Empty clause (resolved)
+                newClasues.add(new Clause(null));
+            }
+        }
+    } else if (Ci.isUnit() && !Cj.isUnit()) {
+        Predicate CiUnitPred = CiLits.get(0);
+        for (Predicate pred : CjLits) {
+            if (CiUnitPred.name.contentEquals(pred.name) &&
+                ((CiUnitPred.is_negated && !pred.is_negated) || (!CiUnitPred.is_negated && pred.is_negated))) {
+                
+                ArrayList<Term> CiUnitArgs = CiUnitPred.getArguments();
+                ArrayList<Term> predArgs = pred.getArguments();
+                Subsitution theta = uni.unify(CiUnitArgs, predArgs, new Subsitution());
+                
+                if (theta != null) {
+                    // Apply substitution to the arguments
+                    CiUnitPred.applySubstitution(theta);
+                    for (Predicate p : CjLits) {
+                        p.applySubstitution(theta);
+                    }
+
+                    // Remove the resolved predicate and add the rest of the clause
+                    ArrayList<Predicate> newCj = new ArrayList<>(CjLits);
+                    newCj.remove(CjLits.indexOf(pred));
+                    newClasues.add(new Clause(newCj));
                 }
             }
         }
-        else if (Ci.isUnit() && !Cj.isUnit())
-        {
-            Predicate CiUnitPred = CiLits.get(0);
-            for (Predicate pred: CjLits)
-            {
-                if ((CiUnitPred.name.contentEquals(pred.name)) && ((CiUnitPred.is_negated && !pred.is_negated) || (!CiUnitPred.is_negated && pred.is_negated)))
-                {
-                    ArrayList<Term> CiUnitArgs = CiUnitPred.getArguments();
-                    ArrayList<Term> predArgs = pred.getArguments();
-                    if ((uni.unify(CiUnitArgs, predArgs, new Subsitution()))!= null)
-                    {
-                        // System.out.println(Ci.toString() + " and  " + Cj.toString());
-                        ArrayList<Predicate> newCj = new ArrayList<>();
-                        newCj.addAll(CjLits);
-                        newCj.remove(CjLits.indexOf(pred));
-                        newClasues.add(new Clause(newCj));
+    } else if (!Ci.isUnit() && Cj.isUnit()) {
+        Predicate CjUnitPred = CjLits.get(0);
+        for (Predicate pred : CiLits) {
+            if (CjUnitPred.name.contentEquals(pred.name) &&
+                ((CjUnitPred.is_negated && !pred.is_negated) || (!CjUnitPred.is_negated && pred.is_negated))) {
+                
+                ArrayList<Term> CjUnitArgs = CjUnitPred.getArguments();
+                ArrayList<Term> predArgs = pred.getArguments();
+                Subsitution theta = uni.unify(CjUnitArgs, predArgs, new Subsitution());
+                
+                if (theta != null) {
+                    // Apply substitution to the arguments
+                    CjUnitPred.applySubstitution(theta);
+                    for (Predicate p : CiLits) {
+                        p.applySubstitution(theta);
                     }
-                } 
+
+                    // Remove the resolved predicate and add the rest of the clause
+                    ArrayList<Predicate> newCi = new ArrayList<>(CiLits);
+                    newCi.remove(CiLits.indexOf(pred));
+                    newClasues.add(new Clause(newCi));
+                }
             }
         }
-        else if (!Ci.isUnit() && Cj.isUnit())
-        {
-            Predicate CjUnitPred = CjLits.get(0);
-            for (Predicate pred: CiLits)
-            {
-                if ((CjUnitPred.name.contentEquals(pred.name)) && ((CjUnitPred.is_negated && !pred.is_negated) || (!CjUnitPred.is_negated && pred.is_negated)))
-                {
-                    ArrayList<Term> CjUnitArgs = CjUnitPred.getArguments();
-                    ArrayList<Term> predArgs = pred.getArguments();
-                    if ((uni.unify(CjUnitArgs, predArgs, new Subsitution()))!= null)
-                    {
-                        // System.out.println(Ci.toString() + " and  " + Cj.toString());
-                        ArrayList<Predicate> newCi = new ArrayList<>();
-                        newCi.addAll(CiLits);
-                        newCi.remove(CiLits.indexOf(pred));
+    } else {
+        for (Predicate CiPred : CiLits) {
+            for (Predicate CjPred : CjLits) {
+                if (CiPred.name.contentEquals(CjPred.name) &&
+                    ((CiPred.is_negated && !CjPred.is_negated) || (!CiPred.is_negated && CjPred.is_negated))) {
+                    
+                    ArrayList<Term> CiArgs = CiPred.getArguments();
+                    ArrayList<Term> CjArgs = CjPred.getArguments();
+                    Subsitution theta = uni.unify(CiArgs, CjArgs, new Subsitution());
+                    
+                    if (theta != null) {
+                        // Apply substitution to the arguments
+                        CiPred.applySubstitution(theta);
+                        for (Predicate p : CiLits) {
+                            p.applySubstitution(theta);
+                        }
+                        for (Predicate p : CjLits) {
+                            p.applySubstitution(theta);
+                        }
+
+                        // Remove the resolved predicates and combine the rest
+                        ArrayList<Predicate> newCi = new ArrayList<>(CiLits);
+                        newCi.remove(CiPred);
+                        ArrayList<Predicate> newCj = new ArrayList<>(CjLits);
+                        newCj.remove(CjPred);
+                        newCi.addAll(newCj);
                         newClasues.add(new Clause(newCi));
                     }
-                } 
-            }
-        }
-        else
-        {
-            for (Predicate CiPred: CiLits)
-            {
-                for (Predicate CjPred: CjLits)
-                {
-                    if (CiPred.name.toString().contains(CjPred.name.toString()))
-                    {
-                        if ((CiPred.is_negated && !CjPred.is_negated) || (!CiPred.is_negated && CjPred.is_negated))
-                        {
-                            ArrayList<Term> CiArgs = CiPred.getArguments();
-                            ArrayList<Term> CjArgs = CjPred.getArguments();
-                            if (uni.unify(CiArgs, CjArgs, new Subsitution())!= null)
-                            {
-                                // System.out.println(Ci.toString() + " and  " + Cj.toString());
-                                ArrayList<Predicate> newCi = new ArrayList<>();
-                                newCi.addAll(CiLits);
-                                newCi.remove(CiPred);
-                                ArrayList<Predicate> newCj = new ArrayList<>();
-                                newCj.addAll(CjLits);
-                                newCj.remove(CjPred);
-                                newCi.addAll(newCj);
-                                newClasues.add(new Clause(newCi));
-                            }
-                        }
-                    }
                 }
             }
         }
-        return newClasues;
     }
+    return newClasues;
+    }
+
 }

@@ -44,14 +44,14 @@ public class Tester {
         // KBases.add(new KnowledgeBase("./universals/u06.cnf"));
 
         // KBases.add(new KnowledgeBase("./universals+constants/uc01.cnf"));
-        KBases.add(new KnowledgeBase("./universals+constants/uc02.cnf"));
+        // KBases.add(new KnowledgeBase("./universals+constants/uc02.cnf"));
         // KBases.add(new KnowledgeBase("./universals+constants/uc03.cnf"));
         // KBases.add(new KnowledgeBase("./universals+constants/uc04.cnf"));
         // KBases.add(new KnowledgeBase("./universals+constants/uc05.cnf"));
         // KBases.add(new KnowledgeBase("./universals+constants/uc06.cnf"));
         // KBases.add(new KnowledgeBase("./universals+constants/uc07.cnf"));
         // KBases.add(new KnowledgeBase("./universals+constants/uc08.cnf"));
-        // KBases.add(new KnowledgeBase("./universals+constants/uc09.cnf"));
+        KBases.add(new KnowledgeBase("./universals+constants/uc09.cnf"));
 
 
 
