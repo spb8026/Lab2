@@ -9,4 +9,26 @@ public abstract class Term {
         }
         return this;  // If no substitution found, return the original term
     }
+
+    public Term deepCopy()
+    {
+        if (this instanceof Variable)
+        {
+            return new Variable(name);
+        }
+        else if (this instanceof Constant)
+        {
+            return new Constant(name);
+        }
+        else if (this instanceof Function)
+        {
+            return new Function(name);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
 }

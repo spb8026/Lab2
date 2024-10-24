@@ -5,36 +5,31 @@ public class Predicate {
     boolean is_negated;
     ArrayList<Term> arguments;
 
-    public Predicate(String name, boolean is_negated, ArrayList<Term> arguments)
-    {
+    public Predicate(String name, boolean is_negated, ArrayList<Term> arguments) {
         this.name = name;
         this.is_negated = is_negated;
         this.arguments = arguments;
     }
 
-    public Predicate(String name)
-    {
+    public Predicate(String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
-       String str = "";
-       if (is_negated)
-       {
+        String str = "";
+        if (is_negated) {
             str += "~";
-       }
-       str+= this.name;
-       str += "(";
-       for (Term trm: arguments)
-       {
-            if (trm != null)
-            {
-                str+= trm.toString() +",";
+        }
+        str += this.name;
+        str += "(";
+        for (Term trm : arguments) {
+            if (trm != null) {
+                str += trm.toString() + ",";
             }
-       }
-       str += ")";
-       return str;
+        }
+        str += ")";
+        return str;
     }
 
     public ArrayList<Term> getArguments() {
@@ -48,6 +43,13 @@ public class Predicate {
             arguments.set(i, substitutedArg);  // Update with substituted argument
         }
     }
-    
+
+    public Predicate deepCopy()
+    {
+        ArrayList<Term> argCopy = new ArrayList<>();
+        argCopy.addAll(this.arguments);
+        return new Predicate(this.name, this.is_negated,argCopy);
+    }
+
 
 }

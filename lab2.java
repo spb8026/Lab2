@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
+/// Author: Shawn Broderick
+/// 
 
 public class lab2 {
 
