@@ -37,7 +37,7 @@ public class Resolver {
             {
                 Pair cuPair = clausePairs.poll();
                 // ArrayList<Clause> newClauses = PCResolve(cuPair.getFirst(), cuPair.getSecond());
-                System.out.println(cuPair.getFirst().toString() + " and " + cuPair.getSecond().toString() + " to :");
+                // System.out.println(cuPair.getFirst().toString() + " and " + cuPair.getSecond().toString() + " to :");
                 ArrayList<Clause> newClauses = PCResolveWithUni(cuPair.getFirst(), cuPair.getSecond());
                 for (Clause newClause: newClauses)
                 {
@@ -48,7 +48,7 @@ public class Resolver {
                             return false;
                         }
                         newClausesSet.add(newClause);
-                        System.out.println(newClause.toString());
+                        // System.out.println(newClause.toString());
                     }
                 }
                 // System.out.println("________________________________________________");
