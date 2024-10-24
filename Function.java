@@ -14,6 +14,10 @@ public class Function extends Term{
     {
         this.name = name;
     }
+    
+    public ArrayList<Term> getArguments() {
+        return arguments;
+    }
 
     @Override
     public String toString() {
