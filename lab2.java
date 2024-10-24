@@ -4,10 +4,17 @@ import java.util.ArrayList;
 public class lab2 {
 
     public static void main(String[] args) throws FileNotFoundException {
-        // KnowledgeBase KB = new KnowledgeBase("./functions/f2.cnf");
-        KnowledgeBase KB = new KnowledgeBase("./constants/c01.cnf");
+        KnowledgeBase KB = new KnowledgeBase(args[0]);
         Resolver resolver = new Resolver(KB);
-        resolver.resolve();
+        Boolean ans = resolver.queResolve();
+        if(ans)
+        {
+            System.out.println("yes");
+        }
+        else
+        {
+            System.out.println("false");
+        }
     }
 
 }
